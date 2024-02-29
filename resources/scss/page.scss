@@ -1,0 +1,151 @@
+/* Helpers */
+:root{
+    font-family: 'figtree', sans-serif;
+    --bg: white;
+    --primary: #449DD1;
+    --secondary: #F5F5F5;
+    --success: #3DDC97;
+    --warning: #FCD581;
+    --danger: #D52941;
+    --dark: #1D1E18;
+    --light: #F5F5F5;
+    color: #1D1E18;
+    --text: #1D1E18;
+}
+@media (prefers-color-scheme: dark) {
+    :root{
+        color: #F5F5F5;
+        --text: #F5F5F5;
+        --bg: #1D1E18;
+    }
+}
+
+.text{
+    &-primary{
+        color: var(--primary);
+    }
+    &-success{
+        color: var(--success);
+    }
+    &-warning{
+        color: var(--warning);
+    }
+    &-danger{
+        color: var(--danger);
+    }
+    &-dark{
+        color: var(--dark);
+    }
+}
+.alert {
+    border-radius: 5px;
+    padding: 15px;
+    font-weight: 600;
+    &.alert-primary {
+        background-color: var(--primary);
+        color: var(--light);
+    }
+    &.alert-success {
+        background-color: var(--success);
+        color: var(--light);
+    }
+    &.alert-warning {
+        background-color: var(--warning);
+        color: var(--dark);
+    }
+    &.alert-danger {
+        background-color: var(--danger);
+        color: var(--light);
+    }
+}
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    &.dot-success {
+        background-color: var(--success);
+    }
+    &.dot-warning {
+        background-color: var(--warning);
+    }
+    &.dot-danger {
+        background-color: var(--danger);
+    }
+}
+
+.badge {
+    border-radius: 4px;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    padding: 5px;
+    .dot {
+        margin-right: 5px;
+    }
+
+    &.badge-success{
+        background-color: var(--success);
+    }
+    &.badge-warning{
+        background-color: var(--warning);
+    }
+    &.badge-danger{
+        background-color: var(--danger);
+    }
+
+    &.badge-outline{
+        background-color: unset;
+        &.badge-success{
+            border: 1px solid var(--success);
+        }
+        &.badge-warning{
+            border: 1px solid var(--warning);
+        }
+        &.badge-danger{
+            border: 1px solid var(--danger);
+        }
+    }
+
+
+}
+
+/* Page css */
+body{
+    background-color: var(--bg);
+}
+main{
+    max-width: 55dvw;
+    margin-left: auto;
+    margin-right: auto;
+
+    .services{
+        margin-top: 1em;
+        .service {
+            background-color: var(--secondary);
+            padding: 5px 15px;
+            border-radius: 5px;
+            .service-core{
+                display:flex;
+                align-items: center;
+                .service-name{
+                    font-weight: 600;
+                    font-size: 1.2rem;
+                    flex-grow: 1;
+                }
+            }
+            .service-description{
+                margin-top:0;
+            }
+        }
+    }
+}
+@media only screen and (max-width : 768px){
+    main{
+        max-width: 75dvw!important;
+    }
+}
+@media only screen and (max-width : 576px){
+    main{
+        max-width: 90dvw!important;
+    }
+}
