@@ -6,9 +6,6 @@
 
     <title>{{env('APP_NAME')}}</title>
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
 
     <!-- Styles -->
     @vite(['resources/scss/page.scss', 'resources/js/page.js'])
@@ -19,18 +16,27 @@
             🎉 Tous les composants sont fonctionnels !
         </div>
         <div class="services">
-            <div class="service">
-                <div class="service-core">
-                    <p class="service-name">Brocoli - serveur web</p>
-                    <div class="badge badge-outline badge-success">
-                        <div class="dot dot-success"></div>
-                        Opérationnel
+            @foreach($services as $service)
+                <div class="service">
+                    <div class="service-core">
+                        <div class="service-name">
+                            <p class="text-bold">{{$service->name}}</p>
+                            <div class="service-description">
+                                <p class="service-description text-light">{{$service->description}}</p>
+                            </div>
+                        </div>
+                        <div class="badge badge-outline badge-{{$service->status->color()}}">
+                            <div class="dot dot-{{$service->status->color()}}"></div>
+                            {{$service->status->label()}}
+                        </div>
                     </div>
+                    @if($service->show_availability && !is_null($service->metric))
+                        <div class="service-availability" data-metric-id="{{$service->metric?->id}}">
+                            <span class="text-light" style='font-style: italic;'>Le graphique de disponibilité est en train de charger...</span>
+                        </div>
+                    @endif
                 </div>
-                <div class="service-description">
-                    <p class="service-description">Brocoli est le serveur web de l'infrastructure fruits-et-legumes.ovh. C'est sur brocoli que la plupart des sites web importants sont hebergés.</p>
-                </div>
-            </div>
+            @endforeach
         </div>
     </main>
 </body>

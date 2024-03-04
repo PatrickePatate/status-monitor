@@ -13,6 +13,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('status');
-});
+Route::get('/', [\App\Http\Controllers\StatusPageController::class, 'show'])->name('status');

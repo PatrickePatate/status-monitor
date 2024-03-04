@@ -14,6 +14,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::get('/metrics/{id}', function ($id, Request $request) {
+    $request->validate(['id'=>'exists:App\Models\Metric,id']);
+    return \App\Http\Resources\MetricPointsResource::collection(\App\Models\MetricPoint::where('metric_id',$id)->orderBy('created_at','desc')->get());
 });
+
+Route::middleware('auth:sanctum')->group(function(){
+
+});
+
