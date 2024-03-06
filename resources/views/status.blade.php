@@ -12,8 +12,18 @@
 </head>
 <body>
     <main>
-        <div class="alert alert-success">
-            🎉 Tous les composants sont fonctionnels !
+        <div class="alert alert-{{$global_status->color()}}">
+            @switch($global_status)
+                @case(App\Enums\ServiceStatus::AVAILABLE)
+                    🎉 Tous les composants sont fonctionnels !
+                    @break
+                @case(App\Enums\ServiceStatus::PARTIAL)
+                    🔨 Certains composants fonctionnent de façon dégradés
+                    @break
+                @case(App\Enums\ServiceStatus::OUTAGE)
+                    💥 Certains composants recontrent des problèmes
+                @break
+            @endswitch
         </div>
         <div class="services">
             @foreach($services as $service)

@@ -19,7 +19,8 @@ class MetricPointFactory extends Factory
     {
         return [
             'metric_id' => Metric::first()->id,
-            'value' => $this->faker->randomNumber(2)
+            'value' => $this->faker->randomNumber(2),
+            'created_at' => $this->faker->dateTimeBetween('-4 days', 'now')
         ];
     }
 }

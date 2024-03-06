@@ -14,3 +14,4 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [\App\Http\Controllers\StatusPageController::class, 'show'])->name('status');
+Route::get('/test', function(){return "ok"; })->name('test');

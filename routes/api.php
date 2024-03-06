@@ -14,10 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/metrics/{id}', function ($id, Request $request) {
-    $request->validate(['id'=>'exists:App\Models\Metric,id']);
-    return \App\Http\Resources\MetricPointsResource::collection(\App\Models\MetricPoint::where('metric_id',$id)->orderBy('created_at','desc')->get());
-});
+Route::get('/metrics/{id}', [\App\Http\Controllers\Api\MetricsController::class, 'metrics']);
 
 Route::middleware('auth:sanctum')->group(function(){
 
