@@ -2,6 +2,11 @@
 
 namespace App\Console;
 
+use App\Jobs\CheckerJob;
+use App\Models\Checks\DnsCheck;
+use App\Models\Checks\HttpCheck;
+use App\Services\DnsCheckService;
+use App\Services\HttpCheckService;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -12,7 +17,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->job(CheckerJob::class)->everyMinute();
     }
 
     /**

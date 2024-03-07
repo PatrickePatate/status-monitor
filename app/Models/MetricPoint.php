@@ -11,6 +11,9 @@ class MetricPoint extends Model
     use HasFactory, HasUuids;
 
     protected $primaryKey = 'uuid';
+
+    protected $guarded = [];
+
     public function metric(){
         return $this->hasOne(Metric::class);
     }

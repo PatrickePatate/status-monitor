@@ -25,6 +25,20 @@
                 @break
             @endswitch
         </div>
+        @if($services->pluck('show_availability')->contains(true))
+            <div class="metrics-settings-wrapper">
+                <div class="metrics-settings-selector">
+                    <small class="d-block text-right">Réglages des métrics :</small>
+                    <div class="metrics-settings-selector-inputs">
+                        <input id="metrics_hours_or_days" type="number" value="45" />
+                        <select id="metrics_hours_or_days_type">
+                            <option value="days">jours</option>
+                            <option value="hours">heures</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        @endif
         <div class="services">
             @foreach($services as $service)
                 <div class="service">
@@ -40,10 +54,17 @@
                             {{$service->status->label()}}
                         </div>
                     </div>
-                    @if($service->show_availability && !is_null($service->metric))
-                        <div class="service-availability" data-metric-id="{{$service->metric?->id}}">
-                            <span class="text-light" style='font-style: italic;'>Le graphique de disponibilité est en train de charger...</span>
-                        </div>
+                    @if($service->show_availability && !$service->metrics->isEmpty())
+                        @foreach($service->metrics as $metric)
+                            <div class="service-availability" data-metric-id="{{$metric->id}}">
+                                <div class="service-availability-infos"><span>{{$metric->name}}</span><span class="metrics_span_label"></span></div>
+                                <div class="service-availability-chart">
+                                    <div class="service-availability-chart-placeholder bg-placeholder"></div>
+                                </div>
+
+                            </div>
+                        @endforeach
+
                     @endif
                 </div>
             @endforeach

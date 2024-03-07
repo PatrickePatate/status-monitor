@@ -18,4 +18,11 @@ class Metric extends Model
     public function service() {
         return $this->hasOne(Service::class);
     }
+
+    public function addPoint($value){
+        return MetricPoint::create([
+            'metric_id' => $this->id,
+            'value' => $value
+        ]);
+    }
 }

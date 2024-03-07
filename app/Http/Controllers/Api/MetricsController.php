@@ -34,7 +34,7 @@ class MetricsController extends Controller
                 'metrics.danger_under',
                 'metrics.suffix',
                 DB::raw('DATE(metric_points.created_at) as date'),
-                DB::raw('AVG(CAST(metric_points.value AS integer)) as average_value')
+                DB::raw('AVG(CAST(metric_points.value AS decimal)) as average_value')
             )
             ->where('services.show_availability', true)
             ->where('metric_points.created_at', '>=', now()->subDays($days))
@@ -57,7 +57,7 @@ class MetricsController extends Controller
                 'metrics.danger_under',
                 'metrics.suffix',
                 DB::raw("TO_CHAR(metric_points.created_at, 'YYYY-MM-DD HH24:00:00') as date"),
-                DB::raw('AVG(CAST(metric_points.value AS integer)) as average_value')
+                DB::raw('AVG(CAST(metric_points.value AS decimal)) as average_value')
             )
             ->where('services.show_availability', true)
             ->where('metric_points.created_at', '>=', now()->subHours($hours))

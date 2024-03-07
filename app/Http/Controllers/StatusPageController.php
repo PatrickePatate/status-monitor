@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 class StatusPageController extends Controller
 {
     public function show(){
-        $services = Service::with(['metric', 'metric.points'])->where('public',true)->get();
+        $services = Service::with(['metrics', 'metrics.points'])->where('public',true)->get();
 
         $partial = false; $outage = false;
         $services->each(function($item) use(&$partial,&$outage) {

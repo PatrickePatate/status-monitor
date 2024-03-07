@@ -3,15 +3,13 @@
 namespace App\Services;
 
 use App\Enums\ServiceStatus;
-use App\Models\HttpCheck;
+use App\Models\Checks\HttpCheck;
 use Illuminate\Support\Facades\Http;
 
 class HttpCheckService extends AbstractCheckService
 {
     protected HttpCheck $check;
     protected $latency = null;
-
-    protected $fail = null;
 
     public function __construct(HttpCheck $check){
         $this->check = $check;
@@ -79,7 +77,7 @@ class HttpCheckService extends AbstractCheckService
         return ServiceStatus::AVAILABLE;
     }
 
-    public function latency(): ?float
+    public function metric(): ?float
     {
         return $this->latency;
     }
@@ -97,9 +95,7 @@ class HttpCheckService extends AbstractCheckService
         ];
     }
 
-    public function failed(){
-        return $this->fail;
-    }
+
 
     private function retryWithoutSsl(){
         $request = Http::withoutVerifying()->retry(1)->timeout(env('CHECKER_TIMEOUT',2));

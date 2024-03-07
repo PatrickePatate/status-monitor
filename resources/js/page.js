@@ -2,13 +2,13 @@ import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css'; // optional for styling
 import moment from 'moment';
 
-window.hours_or_days_metrics = 'days';
-window.hours_or_days = 45;
+window.hours_or_days_metrics = sessionStorage.getItem('hours_or_days_metrics')??'days';
+window.hours_or_days = sessionStorage.getItem('hours_or_days')??45;
+
 
 // Function to throttle the execution of a function
 function throttle(func, limit) {
     let inThrottle = false;
-    console.log('throttle => ',inThrottle);
     return function() {
         const args = arguments;
         const context = this;
@@ -19,7 +19,19 @@ function throttle(func, limit) {
         }
     };
 }
+
+function getMetricsSpanLabel(){
+    switch (window.hours_or_days_metrics){
+        case('days'):
+            return "Derniers "+window.hours_or_days+" jours";
+        case('hours'):
+            return "Dernières "+window.hours_or_days+" heures";
+    }
+}
 async function initAvailabilityChart(){
+    document.getElementById('metrics_hours_or_days').value = window.hours_or_days;
+    document.getElementById('metrics_hours_or_days_type').value = window.hours_or_days_metrics;
+
     // clear cache
     let charts = document.querySelectorAll('.service-availability');
 
@@ -64,10 +76,10 @@ async function getMetric(metric_id){
 
 async function renderAvailabilityChart(item, metrics) {
     const width = item.offsetWidth;
-    let days = 45;
-    let gaps = days - 1;
+    let days = window.hours_or_days;
+    let gaps = Math.max(days,20) - 1;
     let gap_size = ((width / 3) / gaps);
-    let part_size = (((width / 3) * 2) / days);
+    let part_size = (((width / 3) * 2) / Math.max(days,20));
 
     var actual_width = 0;
 
@@ -75,9 +87,11 @@ async function renderAvailabilityChart(item, metrics) {
     svg.setAttribute('width', '100%');
     svg.setAttribute('height', '40px');
 
-    if (metrics.length < days) {
+    metrics = metrics.slice(0,days);
 
-        let to_complete = days - metrics.length;
+    if (metrics.length < (Math.max(days,20))) {
+
+        let to_complete = (Math.max(days,20)) - metrics.length;
         for (var i = 0; i < to_complete; i++) {
 
             metrics.unshift({
@@ -86,11 +100,12 @@ async function renderAvailabilityChart(item, metrics) {
             });
         }
     }
-    metrics.slice(0, days).forEach((m, index) => {
+    // allways display at least 10 tiles
+    metrics.slice(0, Math.max(days,20)).forEach((m, index) => {
         var fill = '#00866e';
         if(m.average_value < m.warning_under) { fill = '#FCD581' }
         if(m.average_value < m.danger_under){ fill = '#D52941' }
-        if(m.average_value == -1) { fill = "#F5F5F5" }
+        if(m.average_value === -1) { fill = "#F5F5F5" }
 
 
         var rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
@@ -104,25 +119,24 @@ async function renderAvailabilityChart(item, metrics) {
                 'Aucune donnée' :
                 "<div style='text-align: center'>" +
                 "Le " + moment(m.date).local().toDate().toLocaleDateString() +
-                (window.hours_or_days_metrics === "hours" ? "à " + moment(m.date).local().toDate().toLocaleTimeString() : "") +
-                "<br>" + Number(m.average_value).toFixed(2) + " " + (m.suffix || '') + "</div>")
+                (window.hours_or_days_metrics === "hours" ? " à " + moment(m.date).local().toDate().toLocaleTimeString() : "") +
+                "<br>" + Math.round(Number(m.average_value)*100)/100 + " " + (m.suffix || '') + "</div>")
         );
 
         svg.appendChild(rect);
         actual_width = actual_width + gap_size + part_size;
     })
 
-    item.innerHTML = "";
-    item.appendChild(svg);
+    item.querySelector('.service-availability-chart').innerHTML = "";
+    item.querySelector('.service-availability-chart').appendChild(svg);
 
     tippy('[data-tippy-content]', {allowHTML: true});
 }
 
-
-window.addEventListener('resize', throttle(async function (event) {
+async function rerender_charts() {
     let charts = document.querySelectorAll('.service-availability');
     for (const item of charts) {
-        if (!item.hasAttribute('data-metric-id')){
+        if (!item.hasAttribute('data-metric-id')) {
             item.remove();
             continue;
         }
@@ -134,6 +148,49 @@ window.addEventListener('resize', throttle(async function (event) {
         });
     }
     tippy('[data-tippy-content]', {allowHTML: true});
-}, 150));
+    document.querySelectorAll('.metrics_span_label').forEach((label)=>{
+        label.innerHTML = getMetricsSpanLabel();
+    });
+}
+// OBSERVER
+window.addEventListener('resize', throttle(async function (event) { rerender_charts(); }, 150));
+document.getElementById('metrics_hours_or_days').addEventListener('change', (e)=>{
+    switch(document.getElementById('metrics_hours_or_days_type').value){
+        case('days'):
+            if(e.target.value > 90){ e.target.value = 90; }
+            if(e.target.value < 0){ e.target.value = 0; }
+            break;
+        case('hours'):
+            if(e.target.value > 24){ e.target.value = 24; }
+            if(e.target.value < 0){ e.target.value = 0; }
+            break;
 
+    }
+    window.hours_or_days = e.target.value;
+    sessionStorage.setItem('hours_or_days', e.target.value);
+    window.hours_or_days_metrics = document.getElementById('metrics_hours_or_days_type').value;
+    sessionStorage.setItem('hours_or_days_metrics', document.getElementById('metrics_hours_or_days_type').value);
+    rerender_charts();
+});
+document.getElementById('metrics_hours_or_days_type').addEventListener('change', (e)=>{
+    switch(e.target.value){
+        case('days'):
+            document.getElementById('metrics_hours_or_days').value = 45;
+            break;
+        case('hours'):
+            document.getElementById('metrics_hours_or_days').value = 12;
+            break;
+    }
+
+    window.hours_or_days = document.getElementById('metrics_hours_or_days').value;
+    sessionStorage.setItem('hours_or_days', document.getElementById('metrics_hours_or_days').value);
+    window.hours_or_days_metrics = e.target.value;
+    sessionStorage.setItem('hours_or_days_metrics', e.target.value);
+    rerender_charts();
+});
+
+// INIT
+document.querySelectorAll('.metrics_span_label').forEach((label)=>{
+    label.innerHTML = getMetricsSpanLabel();
+});
 initAvailabilityChart();
