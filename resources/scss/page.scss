@@ -172,11 +172,12 @@ main{
                     box-sizing: border-box;
                     height: 35px;
                     padding: 5px;
+                    min-width: 5em;
                     margin-top: 5px;
                     font-family: 'Inter', sans-serif;
                 }
                 input{
-                    max-width: 4em;
+                    max-width: 5em;
                 }
             }
         }

@@ -10,6 +10,10 @@ use Illuminate\Database\Eloquent\Model;
 class DnsCheck extends Model
 {
     use HasFactory;
+    protected $casts = [
+        'last_checked_at' => 'datetime'
+    ];
+
 
     protected $guarded = [];
 

@@ -11,6 +11,9 @@ class HttpCheck extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'last_checked_at' => 'datetime'
+    ];
     protected $guarded = [];
 
     public function service(){

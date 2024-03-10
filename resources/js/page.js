@@ -61,9 +61,9 @@ async function getMetric(metric_id){
         console.log('serve from api');
         var endpoint = '';
         if(window.hours_or_days_metrics === "days"){
-            endpoint = 'api/metrics/' + metric_id + '?days='+window.hours_or_days;
+            endpoint = '/api/metrics/' + metric_id + '?days='+window.hours_or_days;
         } else if(window.hours_or_days_metrics === "hours"){
-            endpoint = 'api/metrics/' + metric_id + '?hours='+window.hours_or_days;
+            endpoint = '/api/metrics/' + metric_id + '?hours='+window.hours_or_days;
         } else { return []; }
         let res = await fetch(endpoint);
         res = await res.json();

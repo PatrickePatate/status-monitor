@@ -5,9 +5,14 @@ namespace App\Filament\Resources;
 use App\Enums\ServiceStatus;
 use App\Filament\Resources\ServiceResource\Pages;
 use App\Filament\Resources\ServiceResource\RelationManagers;
+use App\Models\Checks\DnsCheck;
+use App\Models\Checks\HttpCheck;
+use App\Models\Metric;
+use App\Models\MetricPoint;
 use App\Models\Service;
 use App\Models\User;
 use Filament\AvatarProviders\UiAvatarsProvider;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -23,7 +28,8 @@ class ServiceResource extends Resource
 {
     protected static ?string $model = Service::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-server-stack';
+    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {
@@ -51,7 +57,7 @@ class ServiceResource extends Resource
     {
         return $table
             ->columns([
-                ImageColumn::make('user.avatar')->label('Créé par')->circular()->default(fn(User $user) => $user->getFilamentAvatarUrl()),
+                TextColumn::make('user.name')->label('Créé par'),
                 TextColumn::make('name')->label('Nom du service')->description(fn (Service $service): string => $service->description, position: 'under'),
                 IconColumn::make('status')
                     ->label('Statut')
@@ -93,16 +99,32 @@ class ServiceResource extends Resource
                     ->badge(),
 
             ])
+            ->modifyQueryUsing(fn(Builder $query) => $query->with('user'))
             ->filters([
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()->before(function (Service $record) {
+                    HttpCheck::where('service_id',$record->id)->delete();
+                    DnsCheck::where('service_id', $record->id)->delete();
+                    $record->metrics?->each( function($metric) {
+                        MetricPoint::where('metric_id', $metric->id)->delete();
+                        $metric->delete();
+                    });
+                }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()->before(function (Service $record) {
+                        HttpCheck::where('service_id',$record->id)->delete();
+                        DnsCheck::where('service_id', $record->id)->delete();
+                        $record->metrics?->each( function($metric) {
+                            MetricPoint::where('metric_id', $metric->id)->delete();
+                            $metric->delete();
+                        });
+                    }),
                 ]),
             ]);
     }
@@ -120,6 +142,7 @@ class ServiceResource extends Resource
             'index' => Pages\ListServices::route('/'),
             'create' => Pages\CreateService::route('/create'),
             'edit' => Pages\EditService::route('/{record}/edit'),
+            'view' => Pages\ViewService::route('/{record}/view')
         ];
     }
 }

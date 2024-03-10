@@ -10,7 +10,6 @@ use Spatie\Dns\Records\AAAA;
 
 class DnsCheckService extends AbstractCheckService
 {
-    protected DnsCheck $check;
     protected $records = [];
 
     public function __construct(DnsCheck $check){
@@ -53,6 +52,7 @@ class DnsCheckService extends AbstractCheckService
 
             if(count($this->records) < 1){
                 $this->fail = "no_records";
+                $this->fail_message = "Aucun enregistrement trouvé pour le domaine.";
                 return ServiceStatus::OUTAGE;
             }
 
@@ -61,15 +61,18 @@ class DnsCheckService extends AbstractCheckService
                 // if ipv4 && ipv6 have no match, return an OUTAGE instead of a PARTIAL
                 if($check_ipv6 && !$matched_ipv6){
                     $this->fail = "ipv4_6_match";
+                    $this->fail_message = "Aucunes adresses IPV6 ou IPV4 correspondantes trouvées.";
                     return ServiceStatus::OUTAGE;
                 }
                 $this->fail = "ipv4_match";
+                $this->fail_message = "Aucune adresse IPV4 correspondante trouvée.";
                 return ServiceStatus::PARTIAL;
             }
 
             // Checking IPV6 match
             if($check_ipv6 && !$matched_ipv6){
                 $this->fail = "ipv6_match";
+                $this->fail_message = "Aucune adresse IPV6 correspondante trouvée.";
                 return ServiceStatus::PARTIAL;
             }
 
@@ -77,6 +80,7 @@ class DnsCheckService extends AbstractCheckService
         }catch(\Exception $e){
             logger($e->getMessage(),$this->check->toArray());
             $this->fail = "request";
+            $this->fail_message = "La requete DNS a remonté une erreur.";
             return ServiceStatus::OUTAGE;
         }
     }
@@ -91,7 +95,7 @@ class DnsCheckService extends AbstractCheckService
         return true;
     }
 
-    public function metricInfos(): array
+    public static function metricInfos(): array
     {
         return [
           'name' =>  "Nombre d'entrées DNS",

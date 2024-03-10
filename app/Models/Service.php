@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ServiceStatus;
+use App\Models\Checks\CheckError;
 use App\Models\Checks\DnsCheck;
 use App\Models\Checks\HttpCheck;
 use Illuminate\Database\Eloquent\Casts\AsEnumArrayObject;
@@ -15,7 +16,8 @@ class Service extends Model
 
     protected $guarded = [];
     protected $casts = [
-        "status" => ServiceStatus::class
+        "status" => ServiceStatus::class,
+        'last_checked_at' => 'datetime'
     ];
 
     public function user(){
@@ -26,9 +28,14 @@ class Service extends Model
         return $this->hasMany(Metric::class, "service_id");
     }
 
+    public function check_errors(){
+        return $this->hasMany(CheckError::class);
+    }
+
     public function checks(){
         return $this->http_checks->merge($this->dns_checks);
     }
+
     public function http_checks(){
         return $this->hasMany(HttpCheck::class);
     }

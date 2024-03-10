@@ -17,7 +17,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->job(CheckerJob::class)->everyMinute();
+        $schedule->job(CheckerJob::class)->everyThirtySeconds();
     }
 
     /**

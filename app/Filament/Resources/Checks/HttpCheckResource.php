@@ -18,8 +18,9 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class HttpCheckResource extends Resource
 {
     protected static ?string $model = HttpCheck::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $label = "Checks HTTP ";
+    protected static ?string $navigationGroup = 'Checks';
+    protected static ?string $navigationLabel = 'Checks HTTP';
 
     public static function form(Form $form): Form
     {
@@ -69,9 +70,14 @@ class HttpCheckResource extends Resource
                                 Forms\Components\TextInput::make('header_value')->label('Valeur')
                             ])->columnSpan(2),
                     ]),
+                // HttpChecks have latency metric
                 Forms\Components\Select::make('metric_id')
                     ->label('Métric associée au check')
-                    ->relationship(name:'metric', titleAttribute: 'name')
+                    ->relationship(
+                        name:'metric',
+                        titleAttribute: 'name',
+                        modifyQueryUsing: function(Builder $query, $get) { return $query->where('service_id',$get('service_id'))->orWhere('id',$get('metric_id')); },
+                    )
                     ->searchable()
                     ->preload()
                     ->nullable(),
