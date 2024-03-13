@@ -39,22 +39,22 @@ class MetricResource extends Resource
                     ->label('Dégradé en-dessous de')
                     ->placeholder("Laisser vide pour ignorer")
                     ->nullable()
-                    ->numeric(),
+                    ->integer(),
                 Forms\Components\TextInput::make('danger_under')
                     ->label('En panne en-dessous de')
                     ->placeholder("Laisser vide pour ignorer")
                     ->nullable()
-                    ->numeric(),
+                    ->integer(),
                 Forms\Components\TextInput::make('warning_upper')
                     ->label('Dégradé au-dessus de')
                     ->placeholder("Laisser vide pour ignorer")
                     ->nullable()
-                    ->numeric(),
+                    ->integer(),
                 Forms\Components\TextInput::make('danger_upper')
                     ->label('En panne au-dessus de')
                     ->placeholder("Laisser vide pour ignorer")
                     ->nullable()
-                    ->numeric(),
+                    ->integer(),
             ]);
     }
 

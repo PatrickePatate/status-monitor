@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/metrics/{id}', [\App\Http\Controllers\Api\MetricsController::class, 'metrics']);
+Route::get('/services', [\App\Http\Controllers\Api\ServicesController::class, 'services']);
+Route::get('/services/badge/{id}', [\App\Http\Controllers\Api\BadgeController::class, 'badge']);
 
 Route::middleware('auth:sanctum')->group(function(){
 

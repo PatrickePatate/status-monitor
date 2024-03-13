@@ -57,7 +57,6 @@ class ServiceResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('user.name')->label('Créé par'),
                 TextColumn::make('name')->label('Nom du service')->description(fn (Service $service): string => $service->description, position: 'under'),
                 IconColumn::make('status')
                     ->label('Statut')
@@ -97,7 +96,7 @@ class ServiceResource extends Resource
                     ->label("Nb. de metrics")
                     ->counts("metrics")
                     ->badge(),
-
+                TextColumn::make('user.name')->label('Créé par')->toggleable(isToggledHiddenByDefault: true),
             ])
             ->modifyQueryUsing(fn(Builder $query) => $query->with('user'))
             ->filters([

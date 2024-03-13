@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0ff9487c7a9f3f44e74b8dc297851da0",
+    "content-hash": "aecc0b2f4545648d9a766ce94640bb2f",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -276,6 +276,71 @@
                 }
             ],
             "time": "2023-01-15T23:15:59+00:00"
+        },
+        {
+            "name": "cachethq/badger",
+            "version": "v3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/cachethq/badger.git",
+                "reference": "0fc4ccda6a684b8e5c6e7622db907b8688f07830"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/cachethq/badger/zipball/0fc4ccda6a684b8e5c6e7622db907b8688f07830",
+                "reference": "0fc4ccda6a684b8e5c6e7622db907b8688f07830",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/contracts": "^8.0|^9.0|^10.0",
+                "illuminate/support": "^8.0|^9.0|^10.0",
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^8.8",
+                "pestphp/pest": "^2.13",
+                "pestphp/pest-plugin-laravel": "^2.2"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                },
+                "laravel": {
+                    "providers": [
+                        "Cachet\\Badger\\BadgerServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Cachet\\Badger\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "James Brooks",
+                    "email": "james@alt-three.com"
+                }
+            ],
+            "description": "A badge generator for Laravel.",
+            "keywords": [
+                "CachetHQ",
+                "badge",
+                "badger",
+                "cachet",
+                "shield",
+                "svg"
+            ],
+            "support": {
+                "issues": "https://github.com/cachethq/badger/issues",
+                "source": "https://github.com/cachethq/badger"
+            },
+            "time": "2023-08-21T16:12:47+00:00"
         },
         {
             "name": "carbonphp/carbon-doctrine-types",

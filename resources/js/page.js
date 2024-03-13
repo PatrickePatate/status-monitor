@@ -103,8 +103,10 @@ async function renderAvailabilityChart(item, metrics) {
     // allways display at least 10 tiles
     metrics.slice(0, Math.max(days,20)).forEach((m, index) => {
         var fill = '#00866e';
-        if(m.average_value < m.warning_under) { fill = '#FCD581' }
-        if(m.average_value < m.danger_under){ fill = '#D52941' }
+        if(m.warning_under !== null && m.average_value < m.warning_under) { fill = '#FCD581' }
+        if(m.danger_under !== null && m.average_value < m.danger_under){ fill = '#D52941' }
+        if(m.warning_upper !== null && m.average_value > m.warning_upper) { fill = '#FCD581' }
+        if(m.danger_upper !== null && m.average_value > m.danger_upper){ fill = '#D52941' }
         if(m.average_value === -1) { fill = "#F5F5F5" }
 
 

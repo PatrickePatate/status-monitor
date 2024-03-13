@@ -32,6 +32,8 @@ class MetricsController extends Controller
                 'metrics.service_id',
                 'metrics.warning_under',
                 'metrics.danger_under',
+                'metrics.warning_upper',
+                'metrics.danger_upper',
                 'metrics.suffix',
                 DB::raw('DATE(metric_points.created_at) as date'),
                 DB::raw('AVG(CAST(metric_points.value AS decimal)) as average_value')
