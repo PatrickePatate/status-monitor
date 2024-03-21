@@ -15,7 +15,7 @@ class MetricsController extends Controller
             $days = min(intval($req->days),90);
             return MetricPointsResource::collection($this->__daysAvgMetrics($id, $days));
         } elseif($req->has('hours')) {
-            $hours = min(intval($req->hours),24);
+            $hours = min(intval($req->hours),48);
             return MetricPointsResource::collection($this->__hoursAvgMetrics($id, $hours));
         } else {
             $days = 45;
@@ -39,6 +39,7 @@ class MetricsController extends Controller
                 DB::raw('AVG(CAST(metric_points.value AS decimal)) as average_value')
             )
             ->where('services.show_availability', true)
+            ->where('services.public', true)
             ->where('metric_points.created_at', '>=', now()->subDays($days))
             ->where('metrics.id', $id)
             ->groupBy(DB::raw('DATE(metric_points.created_at)'),'metrics.id','services.show_availability')

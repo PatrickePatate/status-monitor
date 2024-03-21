@@ -17,7 +17,7 @@ class MetricFactory extends Factory
      */
     public function definition(): array
     {
-        $services = Service::take(10)->get();
+        $services = Service::limit(10)->get();
         return [
             'name' => $this->faker->word(),
             'service_id' => $services->shuffle()->get(0)->id

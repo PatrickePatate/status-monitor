@@ -34,7 +34,7 @@ class HttpCheckService extends AbstractCheckService
         // GET
         if($this->check->method == "get"){
             try{
-                $request = $request->get($this->check->url, @json_decode($this->check->post_args,1)??[]);
+                $request = $request->get($this->check->url, @json_decode($this->check->request_args,1)??[]);
             } catch(\Exception $e){
                 //Check certificate
                 if($this->check->check_cert){
@@ -47,7 +47,7 @@ class HttpCheckService extends AbstractCheckService
         // POST
         } elseif($this->check->method == "post") {
             try{
-                $request = $request->asForm()->post($this->check->url, @json_decode($this->check->post_args)??[]);
+                $request = $request->post($this->check->url, @json_decode($this->check->request_args,1)??[]);
             } catch(\Exception $e){
                 //Check certificate
                 if($this->check->check_cert){
@@ -111,7 +111,7 @@ class HttpCheckService extends AbstractCheckService
         // executing request
         if($this->check->method == "get"){
             try{
-                $request = $request->get($this->check->url, @json_decode($this->check->post_args)??[]);
+                $request = $request->get($this->check->url, @json_decode($this->check->request_args)??[]);
             } catch(\Exception $e){
                 // Without SSL, GET request still fails
                 $this->fail = "request";
@@ -120,7 +120,7 @@ class HttpCheckService extends AbstractCheckService
             }
         } elseif($this->check->method == "post") {
             try{
-                $request = $request->asForm()->post($this->check->url, @json_decode($this->check->post_args)??[]);
+                $request = $request->asForm()->post($this->check->url, @json_decode($this->check->request_args)??[]);
             } catch(\Exception $e){
                 // Without SSL, POST request still fails
                 $this->fail = "request";

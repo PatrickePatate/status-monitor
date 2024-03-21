@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Enums\ServiceStatus;
 use App\Filament\Resources\ServiceResource\Pages;
 use App\Filament\Resources\ServiceResource\RelationManagers;
+use App\Models\Checks\CheckError;
 use App\Models\Checks\DnsCheck;
 use App\Models\Checks\HttpCheck;
 use App\Models\Metric;
@@ -35,10 +36,10 @@ class ServiceResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')->label('Nom du service'),
+                Forms\Components\TextInput::make('name')->label('Nom du service')->required(),
                 Forms\Components\Textarea::make('description')->columnSpan(2),
-                Forms\Components\Toggle::make('public')->label('Affiché sur la page de statut publique'),
-                Forms\Components\Toggle::make('show_availability')->label('Metrics affichées sur la page de statut publique'),
+                Forms\Components\Toggle::make('public')->label('Affiché sur la page de statut publique')->required(),
+                Forms\Components\Toggle::make('show_availability')->label('Metrics affichées sur la page de statut publique')->required(),
                 Forms\Components\Radio::make('status')->label('Statut - Surchargé par les checks si activés')
                     ->inline()->inlineLabel(false)
                     ->options([
@@ -108,6 +109,7 @@ class ServiceResource extends Resource
                 Tables\Actions\DeleteAction::make()->before(function (Service $record) {
                     HttpCheck::where('service_id',$record->id)->delete();
                     DnsCheck::where('service_id', $record->id)->delete();
+                    CheckError::where('service_id', $record->id)->delete();
                     $record->metrics?->each( function($metric) {
                         MetricPoint::where('metric_id', $metric->id)->delete();
                         $metric->delete();
@@ -119,6 +121,7 @@ class ServiceResource extends Resource
                     Tables\Actions\DeleteBulkAction::make()->before(function (Service $record) {
                         HttpCheck::where('service_id',$record->id)->delete();
                         DnsCheck::where('service_id', $record->id)->delete();
+                        CheckError::where('service_id', $record->id)->delete();
                         $record->metrics?->each( function($metric) {
                             MetricPoint::where('metric_id', $metric->id)->delete();
                             $metric->delete();

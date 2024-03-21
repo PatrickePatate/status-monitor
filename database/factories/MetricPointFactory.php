@@ -17,7 +17,7 @@ class MetricPointFactory extends Factory
      */
     public function definition(): array
     {
-        $metrics = Metric::take(10)->get();
+        $metrics = Metric::limit(10)->get();
         return [
             'metric_id' => $metrics->shuffle()->get(0)->id,
             'value' => $this->faker->randomNumber(2),

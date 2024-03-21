@@ -18,17 +18,17 @@ class HttpCheckFactory extends Factory
      */
     public function definition(): array
     {
-        $services = Service::take(10)->get();
-        $metrics = Metric::take(10)->get();
+        $services = Service::limit(10)->get();
+        $metrics = Metric::limit(10)->get();
         return [
             'url' => $this->faker->url(),
             'method' => $this->faker->randomElement(['get', 'post']),
-            'request_args' => [],
+            'request_args' => json_encode([]),
             'service_id' => $services->shuffle()->first()?->id,
             'http_code' => $this->faker->randomElement([200, 200, 200, 500, 401]),
             'http_body' => '',
             'check_cert' => $this->faker->boolean(),
-            'provide_headers' => [],
+            'provide_headers' => json_encode([]),
             'metric_id' => $metrics->shuffle()->first()?->id
         ];
     }

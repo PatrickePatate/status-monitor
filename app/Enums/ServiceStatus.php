@@ -27,4 +27,23 @@ enum ServiceStatus: string {
             ServiceStatus::MAINTENANCE => 'secondary',
         };
     }
+
+    public function severity_score(): int
+    {
+        return match($this) {
+            ServiceStatus::AVAILABLE => 0,
+            ServiceStatus::PARTIAL => 2,
+            ServiceStatus::OUTAGE => 3,
+            ServiceStatus::MAINTENANCE => 1,
+        };
+    }
+
+    public static function from_severity($severity){
+        return match($severity) {
+            0 => ServiceStatus::AVAILABLE,
+            2 => ServiceStatus::PARTIAL,
+            3 => ServiceStatus::OUTAGE,
+            1 => ServiceStatus::MAINTENANCE,
+        };
+    }
 }

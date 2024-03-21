@@ -26,13 +26,13 @@ class StatusPageTest extends TestCase
 
         $response->assertStatus(200);
 
-        $pub_services = Service::select(['name', 'status'])->where('public',true)->get();
+        $pub_services = Service::select(['id','name', 'status'])->where('public',true)->get();
         $check = [];
         foreach($pub_services as $ser){
             $check[] = $ser->name;
             $check[] = $ser->status->label();
         }
-
         $response->assertSeeInOrder($check);
+        $response->assertViewHas('services', $pub_services);
     }
 }

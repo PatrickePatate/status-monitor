@@ -32,7 +32,7 @@ class ViewServiceDisplayLastErrors extends Component implements HasForms, HasTab
             ->columns([
                 TextColumn::make('created_at')
                     ->label('Survenue le')
-                    ->formatStateUsing(fn(Carbon $date) => $date->format('d/m/Y H:i')),
+                    ->date("d/m/Y H:i:s"),
                 TextColumn::make('error_type')
                     ->label('Erreur'),
                 TextColumn::make('error_message'),

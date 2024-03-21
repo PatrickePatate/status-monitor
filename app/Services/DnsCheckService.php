@@ -102,9 +102,4 @@ class DnsCheckService extends AbstractCheckService
           'description' => "Récupère le nombre d'entrées DNS pour le domaine."
         ];
     }
-
-    public function failed()
-    {
-        // TODO: Implement failed() method.
-    }
 }

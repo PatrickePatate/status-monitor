@@ -22,6 +22,8 @@ class CheckerJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    protected $services_status = [];
+    protected $services_status_updated = [];
     /**
      * Create a new job instance.
      */
@@ -38,12 +40,14 @@ class CheckerJob implements ShouldQueue
     {
         Service::with(['http_checks', 'dns_checks'])->get()->each(function($service){
             try{
+                // init service status before checks
+                $this->services_status[$service->id] = $service;
+                // do tests
                 $service->http_checks->each(function($check){
                     $prev_status = $check->service?->status;
                     $checker = (new HttpCheckService($check));
                     $res = $checker->check();
-                    logger('HTTP CHECK de '.$checker->getCheck()->service?->name.PHP_EOL."Résultat: ".$res->label());
-                    $this->process_status($check, $res);
+                    $this->process_service_check_result($check, $res);
 
                     if(!is_null($check->metric) && $checker->provideMetric()){
                         $check->metric->addPoint($checker->metric());
@@ -55,7 +59,7 @@ class CheckerJob implements ShouldQueue
                     $prev_status = $check->service?->status;
                     $checker = (new DnsCheckService($check));
                     $res = $checker->check();
-                    $this->process_status($check, $res);
+                    $this->process_service_check_result($check, $res);
 
                     if(!is_null($check->metric) && $checker->provideMetric()){
                         $check->metric->addPoint($checker->metric());
@@ -63,6 +67,9 @@ class CheckerJob implements ShouldQueue
                     // process errors
                     $this->process_error($check, $checker, $prev_status);
                 });
+
+                // process status
+                $this->process_status();
             }catch(\Exception $e){
                 logger('EMERGENCY WHILE CHECKING SERVICE: '.$e->getMessage(), $service->toArray());
             }
@@ -71,15 +78,20 @@ class CheckerJob implements ShouldQueue
 
     }
 
-    private function process_status(Model $model, $status){
-        $model->service->status = $status;
-        if($model->service->isDirty('status')){
-            $model->service?->update([
-                'status'=>$status,
-                'last_checked_at' => Carbon::now()
-            ]);
-        }else{
-            $model->service->update(['last_checked_at' => Carbon::now()]);
+    private function process_service_check_result(Model $model, $status){
+        $this->services_status_updated[$model->service?->id][] = ['status'=>$status,'severity'=>$status->severity_score()];
+    }
+
+    private function process_status(){
+        foreach ($this->services_status as $service_id => $service){
+            // If service has been manually set to maintenance, do not override status
+            if($service->status !== ServiceStatus::MAINTENANCE){
+                $results = collect($this->services_status_updated[$service_id]);
+
+                if($service->status->severity_score() !== $results->max('severity')){
+                    $service->update(['status' => ServiceStatus::from_severity($results->max('severity')), 'last_checked_at' => now()]);
+                }
+            }
         }
     }
 

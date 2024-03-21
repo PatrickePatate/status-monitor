@@ -48,6 +48,7 @@ class EditHttpCheck extends EditRecord
             'service_id' => $data['service_id'],
             'provide_headers' => $headers,
             'http_code' => $data['http_code'],
+            'http_body' => $data['http_body'],
             'check_cert' => $data['check_cert'],
             'metric_id' => $data['metric_id']
         ]);

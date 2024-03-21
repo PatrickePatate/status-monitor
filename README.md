@@ -5,6 +5,7 @@
 Status Monitor is a simple web app built to be deployed easily with docker and easy to configure. Status Monitor is another status page app that includes internal automatic monitoring of your services and a public api to integrate with your other tools.
 
 Status Monitor has Metrics, HTTP and DNS checks, a public status page, status badges...
+![How does Status Monitor works](https://github.com/PatrickePatate/status_monitor/blob/main/storage/app/public/fonctionnement_sm.png?raw=true)
 
 ## Contribute to Status Monitor
 

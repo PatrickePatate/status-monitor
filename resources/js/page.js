@@ -1,6 +1,8 @@
 import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css'; // optional for styling
-import moment from 'moment';
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 
 window.hours_or_days_metrics = sessionStorage.getItem('hours_or_days_metrics')??'days';
 window.hours_or_days = sessionStorage.getItem('hours_or_days')??45;
@@ -53,22 +55,25 @@ async function initAvailabilityChart(){
 }
 async function getMetric(metric_id){
     // data are cached ?
-    let cachedData = sessionStorage.getItem(window.hours_or_days_metrics+'metric'+metric_id);
-    if(cachedData) {
+    let cachedData = JSON.parse(sessionStorage.getItem(window.hours_or_days_metrics+'metric'+metric_id));
+    //force refresh data every five minutes
+    let served_at = new Date(cachedData?.served_at);
+    let time_diff = Math.floor(((new Date()) - served_at) / 1000 / 60) % 60;
+    if(cachedData && time_diff < 3) {
         console.log('serve from cache');
-        return JSON.parse(cachedData);
+        return cachedData.data;
     } else {
         console.log('serve from api');
         var endpoint = '';
         if(window.hours_or_days_metrics === "days"){
-            endpoint = '/api/metrics/' + metric_id + '?days='+window.hours_or_days;
+            endpoint = '/api/metrics/' + metric_id + '?days=90';
         } else if(window.hours_or_days_metrics === "hours"){
-            endpoint = '/api/metrics/' + metric_id + '?hours='+window.hours_or_days;
+            endpoint = '/api/metrics/' + metric_id + '?hours=48';
         } else { return []; }
         let res = await fetch(endpoint);
         res = await res.json();
         // caching response
-        sessionStorage.setItem(window.hours_or_days_metrics+'metric'+metric_id, JSON.stringify(res.data));
+        sessionStorage.setItem(window.hours_or_days_metrics+'metric'+metric_id, JSON.stringify({data: res.data, served_at: new Date()}));
         return res.data;
     }
 
@@ -87,21 +92,25 @@ async function renderAvailabilityChart(item, metrics) {
     svg.setAttribute('width', '100%');
     svg.setAttribute('height', '40px');
 
-    metrics = metrics.slice(0,days);
+    let data = [];
 
-    if (metrics.length < (Math.max(days,20))) {
+    let now = dayjs(new Date()).utc();
+    let format = window.hours_or_days_metrics === "days" ? 'YYYY-MM-DD' : 'YYYY-MM-DD HH:00:00';
+    for (var y = 0; y < (Math.max(days,20)); y++) {
+        let metric = metrics.find(o => o.date === now.format(format));
 
-        let to_complete = (Math.max(days,20)) - metrics.length;
-        for (var i = 0; i < to_complete; i++) {
-
-            metrics.unshift({
+        if(metric !== undefined){
+            data.unshift(metric);
+        }else{
+            data.unshift({
                 average_value: -1,
-                created_at: null
-            });
+                date: now.format(format)
+            })
         }
+        now = now.subtract(1,window.hours_or_days_metrics);
     }
-    // allways display at least 10 tiles
-    metrics.slice(0, Math.max(days,20)).forEach((m, index) => {
+
+    data.forEach((m, index) => {
         var fill = '#00866e';
         if(m.warning_under !== null && m.average_value < m.warning_under) { fill = '#FCD581' }
         if(m.danger_under !== null && m.average_value < m.danger_under){ fill = '#D52941' }
@@ -118,10 +127,14 @@ async function renderAvailabilityChart(item, metrics) {
         rect.setAttribute('fill', fill);
         rect.setAttribute('data-tippy-content',
             (m.average_value === -1 ?
-                'Aucune donnée' :
                 "<div style='text-align: center'>" +
-                "Le " + moment(m.date).local().toDate().toLocaleDateString() +
-                (window.hours_or_days_metrics === "hours" ? " à " + moment(m.date).local().toDate().toLocaleTimeString() : "") +
+                "Le " + (dayjs(m.date).utc(true)).local().format('DD/MM/YY') +
+                (window.hours_or_days_metrics === "hours" ? " à " + (dayjs(m.date).utc(true)).local().format('HH:mm:ss') : "") + "<br>" +
+                '<em>Aucune donnée</em>' +
+                '</div>' :
+                "<div style='text-align: center'>" +
+                "Le " + (dayjs(m.date).utc(true)).local().format('DD/MM/YY') +
+                (window.hours_or_days_metrics === "hours" ? " à " + (dayjs(m.date).utc(true)).local().format('HH:mm:ss') : "") +
                 "<br>" + Math.round(Number(m.average_value)*100)/100 + " " + (m.suffix || '') + "</div>")
         );
 
@@ -163,7 +176,7 @@ document.getElementById('metrics_hours_or_days').addEventListener('change', (e)=
             if(e.target.value < 0){ e.target.value = 0; }
             break;
         case('hours'):
-            if(e.target.value > 24){ e.target.value = 24; }
+            if(e.target.value > 48){ e.target.value = 48; }
             if(e.target.value < 0){ e.target.value = 0; }
             break;
 
@@ -194,5 +207,16 @@ document.getElementById('metrics_hours_or_days_type').addEventListener('change',
 // INIT
 document.querySelectorAll('.metrics_span_label').forEach((label)=>{
     label.innerHTML = getMetricsSpanLabel();
+});
+document.querySelectorAll('.badge-icon').forEach((badge_icon)=>{
+    badge_icon.addEventListener('click', (e) => {
+        let url = e.target.getAttribute('data-badge-url');
+        navigator.clipboard.writeText(url);
+        e.target._tippy.setContent('Copié !');
+        e.target._tippy.show();
+        setTimeout(()=>{
+            e.target._tippy.setContent('Copier l\'URL vers le badge de statut du service');
+        },3000)
+    })
 });
 initAvailabilityChart();

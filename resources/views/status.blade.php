@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>{{env('APP_NAME')}}</title>
-
+    <meta http-equiv="refresh" content="60;URL=/">
 
     <!-- Styles -->
     @vite(['resources/scss/page.scss', 'resources/js/page.js'])
@@ -44,7 +44,7 @@
                 <div class="service">
                     <div class="service-core">
                         <div class="service-name">
-                            <p class="text-bold">{{$service->name}}</p>
+                            <p class="text-bold d-flex" style="align-items:center;"><x-heroicon-o-arrow-top-right-on-square class="badge-icon" data-badge-url="{{route('api.services.badge',['id'=>$service->id])}}" data-tippy-content="Copier l'URL vers le badge de statut du service" />{{$service->name}}</p>
                             <div class="service-description">
                                 <p class="service-description text-light">{{$service->description}}</p>
                             </div>

@@ -18,8 +18,8 @@ class DnsCheckFactory extends Factory
      */
     public function definition(): array
     {
-        $services = Service::take(10)->get();
-        $metrics = Metric::take(10)->get();
+        $services = Service::limit(10)->get();
+        $metrics = Metric::limit(10)->get();
         return [
             'domain' => $this->faker->domainName(),
             'service_id' => $services->shuffle()->first()?->id,

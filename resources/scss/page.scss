@@ -89,6 +89,7 @@
         color: var(--light);
     }
 }
+
 .dot {
     width: 10px;
     height: 10px;
@@ -105,6 +106,16 @@
     &.dot-secondary {
         background-color: var(--secondary);
     }
+}
+
+.badge-icon{
+    height: 1rem;
+    color: var(--primary);
+    margin-right: 0.3rem;
+    cursor:pointer;
+}
+.badge-icon *{
+    pointer-events: none;
 }
 
 .badge {
