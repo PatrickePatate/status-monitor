@@ -2,8 +2,11 @@
 
 namespace App\Providers;
 
+use Filament\Support\Assets\Js;
 use Filament\Support\Colors\Color;
+use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentColor;
+use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -27,6 +30,9 @@ class AppServiceProvider extends ServiceProvider
             'warning' => Color::hex('#ffc039'),
             'primary' => Color::hex('#449DD1'),
             'secondary' => Color::hex('#dadada'),
+        ]);
+        FilamentAsset::register([
+            Js::make('local-dates', Vite::asset('resources/js/miscs/local_date.js'))->module(true),
         ]);
     }
 }

@@ -10,6 +10,7 @@ use Faker\Provider\Text;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
@@ -30,9 +31,7 @@ class ViewServiceDisplayLastErrors extends Component implements HasForms, HasTab
         return $table
             ->query(CheckError::query()->where('service_id',$this->service?->id)->orderBy('created_at','desc'))
             ->columns([
-                TextColumn::make('created_at')
-                    ->label('Survenue le')
-                    ->date("d/m/Y H:i:s"),
+                ViewColumn::make('created_at')->view('filament.tables.columns.local-date')->label('Survenue le'),
                 TextColumn::make('error_type')
                     ->label('Erreur'),
                 TextColumn::make('error_message'),

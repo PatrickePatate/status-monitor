@@ -84,13 +84,18 @@ class CheckerJob implements ShouldQueue
 
     private function process_status(){
         foreach ($this->services_status as $service_id => $service){
+            $service_updated = false;
             // If service has been manually set to maintenance, do not override status
             if($service->status !== ServiceStatus::MAINTENANCE){
                 $results = collect($this->services_status_updated[$service_id]);
 
                 if($service->status->severity_score() !== $results->max('severity')){
                     $service->update(['status' => ServiceStatus::from_severity($results->max('severity')), 'last_checked_at' => now()]);
+                    $service_updated = true;
                 }
+            }
+            if(!$service_updated){
+                $service->update(['last_checked_at' => now()]);
             }
         }
     }

@@ -58,7 +58,7 @@ class ServiceResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')->label('Nom du service')->description(fn (Service $service): string => $service->description, position: 'under'),
+                TextColumn::make('name')->label('Nom du service')->description(fn (Service $service): string => $service->description, position: 'under')->searchable(),
                 IconColumn::make('status')
                     ->label('Statut')
                     ->icon(fn (ServiceStatus $state): string => match ($state) {
@@ -89,6 +89,7 @@ class ServiceResource extends Resource
                         true => 'primary',
                         false => 'gray',
                     }),
+                Tables\Columns\ViewColumn::make('last_checked_at')->label("Dernier check le/à")->view('filament.tables.columns.last-checked-at'),
                 Tables\Columns\TextColumn::make('nb_checks')
                     ->label("Nb. de checks")
                     ->badge()
