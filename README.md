@@ -12,6 +12,7 @@ Status Monitor has Metrics, HTTP and DNS checks, a public status page, status ba
 ## Installation
 
 Just clone this project and run :
+- ```composer install```
 - ```vendor/bin/sail build --no-cache```
 - ```vendor/bin/sail up -d```
 - ```vendor/bin/sail npm install```
