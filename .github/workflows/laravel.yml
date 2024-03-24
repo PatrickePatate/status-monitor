@@ -34,4 +34,5 @@ jobs:
         DB_CONNECTION: pgsql
         DB_USERNAME: postgres
         DB_PASSWORD: ''
+        DB_HOST: localhost
       run: php artisan test
