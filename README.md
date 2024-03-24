@@ -1,5 +1,7 @@
-![Status Monitor](https://i.ibb.co/Rb8dRct/logo.png#gh-light-mode-only)
-![Status Monitor](https://i.ibb.co/2gPvMCm/logo-white.png#gh-dark-mode-only)
+<picture>
+ <source media="(prefers-color-scheme: dark)" srcset="https://i.ibb.co/2gPvMCm/logo-white.png">
+ <img alt="Status Monitor" src="https://i.ibb.co/2gPvMCm/logo-white.png">
+</picture>
 
 ## About Status Monitor
 
