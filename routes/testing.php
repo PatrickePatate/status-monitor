@@ -13,9 +13,9 @@ use Symfony\Component\HttpFoundation\Request;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::group(['middleware'=>['testing', 'web'], 'prefix'=>'tests'], function(){
+Route::group(['prefix'=>'tests'], function(){
     Route::get('/', function(){
-        echo"yes";
+        echo"ok";
     });
     Route::post('/http_checks/post_check', function (Request $req) {
         return response()->json($req->toArray());
