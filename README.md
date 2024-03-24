@@ -1,6 +1,6 @@
 <picture>
- <source media="(prefers-color-scheme: dark)" srcset="https://i.ibb.co/Rb8dRct/logo.png">
- <img alt="Status Monitor" src="https://i.ibb.co/2gPvMCm/logo-white.png">
+ <source media="(prefers-color-scheme: dark)" srcset="https://i.ibb.co/2gPvMCm/logo-white.png">
+ <img alt="Status Monitor" src="https://i.ibb.co/Rb8dRct/logo.png">
 </picture>
 
 ## About Status Monitor
