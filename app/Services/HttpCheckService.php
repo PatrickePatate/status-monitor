@@ -106,12 +106,12 @@ class HttpCheckService extends AbstractCheckService
 
         // adding user headers
         if(!empty($this->check->provide_headers)){
-            $request = $request->withHeaders(json_decode($this->check->provide_headers)??[]);
+            $request = $request->withHeaders(json_decode($this->check->provide_headers,1)??[]);
         }
         // executing request
         if($this->check->method == "get"){
             try{
-                $request = $request->get($this->check->url, @json_decode($this->check->request_args)??[]);
+                $request = $request->get($this->check->url, @json_decode($this->check->request_args,1)??[]);
             } catch(\Exception $e){
                 // Without SSL, GET request still fails
                 $this->fail = "request";
@@ -120,7 +120,7 @@ class HttpCheckService extends AbstractCheckService
             }
         } elseif($this->check->method == "post") {
             try{
-                $request = $request->asForm()->post($this->check->url, @json_decode($this->check->request_args)??[]);
+                $request = $request->asForm()->post($this->check->url, @json_decode($this->check->request_args,1)??[]);
             } catch(\Exception $e){
                 // Without SSL, POST request still fails
                 $this->fail = "request";

@@ -6,6 +6,7 @@ use Filament\Support\Assets\Js;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentColor;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
@@ -24,6 +25,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (env('PROXY_SCHEME') == "https") {
+            URL::forceScheme('https');
+        }
+
         FilamentColor::register([
             'danger' => Color::hex('#D52941'),
             'success' => Color::hex('#3DDC97'),
