@@ -36,13 +36,13 @@ class EditHttpCheck extends EditRecord
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        
+
         $record->update([
             'url' => $data['url'],
             'method' => $data['method'],
             'request_args' => $data['request_args'],
             'service_id' => $data['service_id'],
-            'provide_headers' => $data['headers'],
+            'provide_headers' => $data['provide_headers'],
             'http_code' => $data['http_code'],
             'http_body' => $data['http_body'],
             'check_cert' => $data['check_cert'],
