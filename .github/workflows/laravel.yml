@@ -47,6 +47,7 @@ jobs:
 #      run: sudo 
     - name: Execute tests (Unit and Feature tests) via PHPUnit
       env:
+        APP_URL: http://127.0.0.1
         DB_CONNECTION: pgsql
         DB_USERNAME: postgres
         DB_PASSWORD: postgres
