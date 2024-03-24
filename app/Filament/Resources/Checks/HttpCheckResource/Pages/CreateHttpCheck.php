@@ -17,10 +17,14 @@ class CreateHttpCheck extends CreateRecord
         $request_args = [];
         $headers = [];
         foreach($data['request_args'] as $d){
-            $request_args[$d['key']] = $d['value'];
+            if(!empty($d['key']) && !empty($d['value'])){
+                $request_args[$d['key']] = $d['value'];
+            }
         }
         foreach($data['provide_headers'] as $d){
-            $headers[$d['header_key']] = $d['header_value'];
+            if(!empty($d['header_key']) && !empty($d['header_value'])){
+                $headers[$d['header_key']] = $d['header_value'];
+            }
         }
 
         return static::getModel()::create([

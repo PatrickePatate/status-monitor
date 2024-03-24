@@ -62,13 +62,13 @@ class HttpCheckResource extends Resource
                             ->schema([
                                 Forms\Components\TextInput::make('key')->label('Clé'),
                                 Forms\Components\TextInput::make('value')->label('Valeur')
-                            ])->columnSpan(2),
+                            ])->columnSpan(2)->defaultItems(0),
                         Repeater::make('provide_headers')
                             ->label('Headers')
                             ->schema([
                                 Forms\Components\TextInput::make('header_key')->label('Clé'),
                                 Forms\Components\TextInput::make('header_value')->label('Valeur')
-                            ])->columnSpan(2),
+                            ])->columnSpan(2)->defaultItems(0),
                     ]),
                 // HttpChecks have latency metric
                 Forms\Components\Select::make('metric_id')

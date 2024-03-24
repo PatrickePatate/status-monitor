@@ -18,14 +18,10 @@ class EditHttpCheck extends EditRecord
         $request_args = [];
         $headers = [];
         foreach(json_decode($data['request_args'],1) as $key => $d){
-            if(!empty($key) && !empty($d)){
-                $request_args[] = ['key' => $key, "value" => $d];
-            }
+            $request_args[] = ['key' => $key, "value" => $d];
         }
         foreach(json_decode($data['provide_headers'],1) as $key => $d){
-            if(!empty($key) && !empty($d)){
-                $headers[] = ["header_key" => $key, "header_value" => $d];
-            }
+            $headers[] = ["header_key" => $key, "header_value" => $d];
 
         }
         $data['provide_headers'] = $headers;
@@ -36,6 +32,21 @@ class EditHttpCheck extends EditRecord
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
+        // processing arrays
+        $request_args = [];
+        $headers = [];
+        foreach($data['request_args'] as $d){
+            if(!empty($d['key']) && !empty($d['value'])){
+                $request_args[$d['key']] =$d['value'];
+            }
+        }
+        foreach($data['provide_headers'] as $d){
+            if(!empty($d['header_key']) && !empty($d['header_value'])){
+                $headers[$d['header_key']] = $d['header_value'];
+            }
+        }
+        $data['provide_headers'] = $headers;
+        $data['request_args'] = $request_args;
 
         $record->update([
             'url' => $data['url'],
